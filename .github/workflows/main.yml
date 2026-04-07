@@ -1,4 +1,4 @@
-name: Build MaxHost Satella
+name: Build MaxHost Satellad
 on:
   push:
     branches: [ main ]

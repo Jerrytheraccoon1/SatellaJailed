@@ -19,18 +19,16 @@ jobs:
         uses: Randomblock1/theos-action@v1
         with:
           theos-sdks: 'https://github.com/theos/sdks'
-          # This is critical for Tweak.swift builds
           orion: true 
 
       - name: Build Tweak
         run: |
           export TARGET=iphone:clang:latest:14.0
-          # Moving into the folder where the Makefile actually is
+          # We must enter the Tweak folder where the Makefile lives
           cd Tweak && make package FINALPACKAGE=1
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MaxHost-Satella
-          # Path to the deb file created by the build
           path: Tweak/packages/*.deb

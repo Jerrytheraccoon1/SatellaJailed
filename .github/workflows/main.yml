@@ -7,7 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest # Using Ubuntu is faster for Docker
+    container: paisseon/theos-action:latest # Pre-baked with Theos and SDKs
 
     steps:
       - name: Checkout
@@ -15,27 +16,15 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Theos
-        run: |
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
-          echo "$HOME/theos/bin" >> $GITHUB_PATH
-
-      - name: Force Install SDK
-        run: |
-          mkdir -p $HOME/theos/sdks
-          # Using a direct raw link with better error handling
-          curl -LO https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz
-          tar -xf iPhoneOS14.5.sdk.tar.xz -C $HOME/theos/sdks
-          rm iPhoneOS14.5.sdk.tar.xz
-
       - name: Build Tweak
         run: |
+          # We are already in the Theos environment
           export TARGET=iphone:clang:latest:14.0
-          make package FINALPACKAGE=1
+          # If your Makefile is inside a subfolder, we cd into it
+          cd SatellaJailed/Tweak && make package FINALPACKAGE=1
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MaxHost-Satella
-          path: packages/*.deb
+          path: SatellaJailed/Tweak/packages/*.deb

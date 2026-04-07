@@ -1,13 +1,10 @@
 TARGET := iphone:clang:latest:14.0
-INSTALL_TARGET_PROCESSES = CarParking
+INSTALL_TARGET_PROCESSES = SpringBoard
 
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = SatellaJailed
-
-# Since the file is now in the same folder as the Makefile:
 SatellaJailed_FILES = Tweak.swift
-SatellaJailed_CFLAGS = -fobjc-arc
-SatellaJailed_FRAMEWORKS = UIKit
+SatellaJailed_SWIFTFLAGS = -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk # Ensure this matches your SDK
 
 include $(THEOS_MAKE_PATH)/tweak.mk

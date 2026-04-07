@@ -7,8 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # Using Ubuntu is faster for Docker
-    container: paisseon/theos-action:latest # Pre-baked with Theos and SDKs
+    runs-on: macos-latest # macOS is required for reliable Swift/Orion builds
 
     steps:
       - name: Checkout
@@ -16,11 +15,16 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Theos
+        uses: Randomblock1/theos-action@v1
+        with:
+          theos-sdks: 'https://github.com/theos/sdks' # Official SDK source
+          orion: 'true' # Required for your Tweak.swift
+
       - name: Build Tweak
         run: |
-          # We are already in the Theos environment
           export TARGET=iphone:clang:latest:14.0
-          # If your Makefile is inside a subfolder, we cd into it
+          # Adjusting path based on your screenshots
           cd SatellaJailed/Tweak && make package FINALPACKAGE=1
         
       - name: Upload Artifact

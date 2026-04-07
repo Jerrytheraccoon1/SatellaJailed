@@ -15,21 +15,22 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Theos
+      - name: Setup Theos (Manual)
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           echo "$HOME/theos/bin" >> $GITHUB_PATH
 
-      - name: Setup iOS SDK
+      - name: Force Install SDK
         run: |
           mkdir -p $HOME/theos/sdks
           curl -L https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz | tar -xf - -C $HOME/theos/sdks
-          # This ensures Theos has a valid SDK to compile against
+          # Manually placing the SDK stops the installer from crashing
 
       - name: Build Tweak
         run: |
           export TARGET=iphone:clang:latest:14.0
+          # We use 'make' directly to bypass the installer check
           make package FINALPACKAGE=1
         
       - name: Upload Artifact

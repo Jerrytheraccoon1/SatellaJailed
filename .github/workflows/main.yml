@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest # macOS is required for reliable Swift/Orion builds
+    runs-on: macos-latest
 
     steps:
       - name: Checkout
@@ -18,17 +18,19 @@ jobs:
       - name: Setup Theos
         uses: Randomblock1/theos-action@v1
         with:
-          theos-sdks: 'https://github.com/theos/sdks' # Official SDK source
-          orion: 'true' # Required for your Tweak.swift
+          theos-sdks: 'https://github.com/theos/sdks'
+          # This is critical for Tweak.swift builds
+          orion: true 
 
       - name: Build Tweak
         run: |
           export TARGET=iphone:clang:latest:14.0
-          # Adjusting path based on your screenshots
-          cd SatellaJailed/Tweak && make package FINALPACKAGE=1
+          # Moving into the folder where the Makefile actually is
+          cd Tweak && make package FINALPACKAGE=1
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MaxHost-Satella
-          path: SatellaJailed/Tweak/packages/*.deb
+          # Path to the deb file created by the build
+          path: Tweak/packages/*.deb

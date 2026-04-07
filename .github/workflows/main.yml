@@ -20,7 +20,6 @@ jobs:
 
       - name: Setup SDK
         run: |
-          # Downloading a patched SDK is required for GitHub runners
           curl -LO https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz
           tar -xf iPhoneOS14.5.sdk.tar.xz -C ~/theos/sdks/
           rm iPhoneOS14.5.sdk.tar.xz

@@ -1,5 +1,2 @@
-    - name: Build Tweak
-      run: |
-        export THEOS=$GITHUB_WORKSPACE/theos
-        make clean
-        make # Just 'make' instead of 'make package' to generate the .dylib
+- name: Build Tweak
+  run: swift build -c release --triple arm64-apple-ios14.0

@@ -1,9 +1,14 @@
 name: MaxHost Build
-on: [push, workflow_dispatch]
+
+on:
+  push:
+    branches: [ emt ] # Matches your branch name from the screenshot
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -11,9 +16,12 @@ jobs:
           submodules: recursive
 
       - name: Setup Theos
-        uses: lb-a/setup-theos@v1.1
+        run: |
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          echo "$HOME/theos/bin" >> $GITHUB_PATH
 
-      - name: Compile Dylib
+      - name: Build Tweak
         run: |
           export TARGET=iphone:clang:latest:14.0
           make package FINALPACKAGE=1
@@ -21,5 +29,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MaxHost-Satella-Dylib
+          name: MaxHost-Satella
           path: packages/*.deb

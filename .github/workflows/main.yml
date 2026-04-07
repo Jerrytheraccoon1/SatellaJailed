@@ -2,7 +2,7 @@ name: MaxHost Build
 
 on:
   push:
-    branches: [ emt ] # Matches your branch name from the screenshot
+    branches: [ emt ]
   workflow_dispatch:
 
 jobs:
@@ -20,6 +20,12 @@ jobs:
           bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           echo "$HOME/theos/bin" >> $GITHUB_PATH
+
+      - name: Setup iOS SDK
+        run: |
+          mkdir -p $HOME/theos/sdks
+          curl -L https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz | tar -xf - -C $HOME/theos/sdks
+          # This ensures Theos has a valid SDK to compile against
 
       - name: Build Tweak
         run: |

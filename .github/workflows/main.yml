@@ -1,2 +1,4 @@
 - name: Build Tweak
-  run: swift build -c release --triple arm64-apple-ios14.0
+  run: 
+    export TARGET=iphone:clang:latest:14.0
+    make package

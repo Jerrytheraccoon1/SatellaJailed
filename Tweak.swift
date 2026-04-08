@@ -7,13 +7,13 @@ struct Tweak {
     static let authKeyName = "MaxHost_Staff_Token"
 
     static func ctor() {
-        // 1. Check if we already have a saved, valid token
+        // 1. Check for saved token
         if let savedKey = prefs.string(forKey: authKeyName) {
             checkKeyWithVPS(key: savedKey, autoLogin: true)
             return
         }
         
-        // 2. If no key, show the login after the app loads
+        // 2. Otherwise, show login UI
         showLoginUI()
     }
 
@@ -21,7 +21,7 @@ struct Tweak {
         guard !isAuthorized else { return }
         isAuthorized = true
         
-        // --- Original Satella Hooks ---
+        // --- Satella Core Hooks ---
         CanPayHook().hook()
         DelegateHook().hook()
         TransactionHook().hook()
@@ -62,7 +62,6 @@ struct Tweak {
     }
 
     static func checkKeyWithVPS(key: String, autoLogin: Bool) {
-        // Change this to your actual VPS endpoint
         let urlString = "http://77.90.13.115:5559/verify?key=\(key)"
         guard let url = URL(string: urlString) else { return }
         
@@ -71,17 +70,13 @@ struct Tweak {
         
         URLSession.shared.dataTask(with: request) { data, _, _ in
             guard let data = data, let response = String(data: data, encoding: .utf8), response.contains("AUTHORIZED") else {
-                // If it fails and it was an auto-login, wipe the bad key
                 if autoLogin { self.prefs.removeObject(forKey: authKeyName) }
                 DispatchQueue.main.async { self.showLoginUI() }
                 return
             }
             
-            // Success: Save key and fire hooks
             self.prefs.set(key, forKey: authKeyName)
-            DispatchQueue.main.async {
-                self.activateHooks()
-            }
+            DispatchQueue.main.async { self.activateHooks() }
         }.resume()
     }
 }
